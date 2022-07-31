@@ -3,9 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="ru.radiationx.wednesday.apk">
 
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-
     <application
         android:name="ru.radiationx.wednesday.apk.Application"
         android:allowBackup="true"
