@@ -23,7 +23,9 @@ object ReminderDateProvider {
     }
 
     private fun getNextCalendar(): Calendar = Calendar.getInstance().apply {
-        add(Calendar.WEEK_OF_YEAR, 1)
+        if (get(Calendar.DAY_OF_WEEK) > Calendar.WEDNESDAY) {
+            add(Calendar.WEEK_OF_YEAR, 1)
+        }
         set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY)
         set(Calendar.HOUR_OF_DAY, 0)
         set(Calendar.MINUTE, 0)
