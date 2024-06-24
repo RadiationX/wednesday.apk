@@ -28,6 +28,9 @@ android {
         jvmTarget = '1.8'
     }
     namespace 'ru.radiationx.wednesday.apk'
+    buildFeatures {
+        buildConfig true
+    }
 }
 
 dependencies {

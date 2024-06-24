@@ -14,6 +14,10 @@ import kotlin.coroutines.resumeWithException
 
 class WednesdayPlayer {
 
+    companion object {
+        private const val MUSIC_URI = "music.mp3"
+    }
+
     suspend fun play(context: Context, playerScope: suspend (PositionProvider) -> Unit) {
         val player = MediaPlayer()
         try {
@@ -34,7 +38,7 @@ class WednesdayPlayer {
 
     private suspend fun awaitPlayingStart(context: Context, player: MediaPlayer) {
         suspendCancellableCoroutine { continuation ->
-            val fd = context.assets.openFd("music.mp3")
+            val fd = context.assets.openFd(MUSIC_URI)
             player.setDataSource(fd.fileDescriptor, fd.startOffset, fd.length)
             if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 player.playbackParams = PlaybackParams().apply {

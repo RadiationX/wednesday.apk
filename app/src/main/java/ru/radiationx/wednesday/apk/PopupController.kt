@@ -1,5 +1,6 @@
 package ru.radiationx.wednesday.apk
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.Rect
@@ -30,7 +31,7 @@ import kotlin.math.max
 class PopupController {
 
     companion object {
-        private const val frogUri = "file:///android_asset/ani1.gif"
+        private const val ANIMATION_URI = "file:///android_asset/ani1.gif"
     }
 
     private val createdPopups = mutableListOf<PopupWindow>()
@@ -39,6 +40,7 @@ class PopupController {
 
     private val isNeedTransition = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
 
+    @SuppressLint("InflateParams")
     private fun createPopup(activity: Activity): PopupWindow {
         val inflater = ContextCompat.getSystemService(activity, LayoutInflater::class.java)
         requireNotNull(inflater)
@@ -62,7 +64,7 @@ class PopupController {
     suspend fun warmUp(context: Context) {
         val appContext = context.applicationContext
         val request = ImageRequest.Builder(appContext)
-            .data(frogUri)
+            .data(ANIMATION_URI)
             .build()
         appContext.imageLoader.execute(request)
     }
@@ -90,7 +92,7 @@ class PopupController {
         imageView.setBackgroundColor(config.color)
         imageView.scaleX = scaleX
         imageView.scaleY = scaleY
-        imageView.load(frogUri) {
+        imageView.load(ANIMATION_URI) {
             repeatCount(0)
         }
         popup.showAtLocation(activity.window.decorView, Gravity.TOP or Gravity.START, x, y)

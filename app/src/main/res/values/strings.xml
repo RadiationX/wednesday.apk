@@ -13,4 +13,5 @@
     <string name="remind_toast_fail_permission">Oh… No permission</string>
     <string name="remind_toast_positive">See you next Wednesday, Dude 🐸</string>
     <string name="remind_toast_negative">Dude…</string>
+    <string name="title_my_dudes">My dudes</string>
 </resources>

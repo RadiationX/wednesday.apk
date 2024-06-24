@@ -6,10 +6,12 @@ import android.util.SizeF
 
 object BeatConfig {
 
+    private const val INITIAL_DELAY = 3.2f
+    private const val BEAT_TIME = 60000 / 145.0
+    const val INITIAL_POSITION_MILLIS = (INITIAL_DELAY * BEAT_TIME).toLong()
+
     private val defaultSize = SizeF(1.0f, 1.0f)
     private val defaultPoint = PointF(0.5f, 0.5f)
-    private const val initialDelay = 3.2f
-    private const val beatTime: Double = 60000 / 145.0
 
     private val cross1 = arrayOf(
         PopupConfig(PointF(0.0f, 0.0f), defaultSize, 2.0, Color.BLUE),
@@ -61,11 +63,10 @@ object BeatConfig {
         PopupConfig(defaultPoint, SizeF(3.9f, 3.9f), 2.5, Color.RED),
     )
 
-    const val initialPositionMillis = (initialDelay * beatTime).toLong()
-    val plan = buildList {
-        var timeSum = initialPositionMillis
+    val timings = buildList {
+        var timeSum = INITIAL_POSITION_MILLIS
         (cross1 + cross2 + chaos + final).forEach {
-            timeSum += (it.timing * beatTime).toLong()
+            timeSum += (it.timing * BEAT_TIME).toLong()
             add(TimingItem(it, timeSum))
         }
     }

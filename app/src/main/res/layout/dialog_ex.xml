@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:background="@drawable/bg_popup_window"
     android:clipToOutline="true"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:targetApi="s">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
@@ -27,10 +28,11 @@
             android:layout_marginStart="8dp"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="My dudes"
+            android:text="@string/title_my_dudes"
             android:textColor="@color/black"
             android:textSize="8sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:ignore="SmallSp" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

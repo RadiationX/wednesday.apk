@@ -2,7 +2,9 @@ package ru.radiationx.wednesday.apk.player
 
 import android.os.SystemClock
 
-class TimePositionProvider(private val timeOffset: Long) : PositionProvider {
+class TimePositionProvider(
+    private val timeOffset: Long
+) : PositionProvider {
 
     private var initialTime = -1L
 

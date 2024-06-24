@@ -35,11 +35,11 @@ class FrogFlow {
         positionProvider: PositionProvider
     ) {
         // await initial frog
-        while (positionProvider.getCurrentPosition() <= BeatConfig.initialPositionMillis) {
+        while (positionProvider.getCurrentPosition() <= BeatConfig.INITIAL_POSITION_MILLIS) {
             delay(10)
         }
 
-        BeatConfig.plan.forEach { item ->
+        BeatConfig.timings.forEach { item ->
             popupController.show(activity, rootRect, item.config)
 
             // await next frog
