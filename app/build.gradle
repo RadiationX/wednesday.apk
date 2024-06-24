@@ -4,12 +4,12 @@ plugins {
 }
 
 android {
-    compileSdk 32
+    compileSdk 34
 
     defaultConfig {
         applicationId "ru.radiationx.wednesday.apk"
         minSdk 21
-        targetSdk 32
+        targetSdk 34
         versionCode 1
         versionName "1.0"
     }
@@ -27,15 +27,16 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    namespace 'ru.radiationx.wednesday.apk'
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.4.2'
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.5.1"
+    implementation 'androidx.core:core-ktx:1.13.1'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.2'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.2'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.2'
 
-    implementation("io.coil-kt:coil:2.1.0")
-    implementation("io.coil-kt:coil-gif:2.1.0")
+    implementation('io.coil-kt:coil:2.6.0')
+    implementation('io.coil-kt:coil-gif:2.6.0')
 }
