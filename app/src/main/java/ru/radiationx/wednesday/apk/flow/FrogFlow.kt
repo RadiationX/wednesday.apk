@@ -4,8 +4,8 @@ import android.graphics.Rect
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.delay
 import ru.radiationx.wednesday.apk.PopupController
-import ru.radiationx.wednesday.apk.PositionProvider
-import ru.radiationx.wednesday.apk.WednesdayPlayer
+import ru.radiationx.wednesday.apk.player.PositionProvider
+import ru.radiationx.wednesday.apk.player.WednesdayPlayer
 import ru.radiationx.wednesday.apk.config.BeatConfig
 
 class FrogFlow {

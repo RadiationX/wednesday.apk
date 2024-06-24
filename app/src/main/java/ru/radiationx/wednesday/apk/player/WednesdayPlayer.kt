@@ -1,4 +1,4 @@
-package ru.radiationx.wednesday.apk
+package ru.radiationx.wednesday.apk.player
 
 import android.content.Context
 import android.media.MediaPlayer
@@ -8,6 +8,7 @@ import android.widget.Toast
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import ru.radiationx.wednesday.apk.BuildConfig
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 

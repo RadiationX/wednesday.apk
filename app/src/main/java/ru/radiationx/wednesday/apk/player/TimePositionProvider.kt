@@ -1,21 +1,6 @@
-package ru.radiationx.wednesday.apk
+package ru.radiationx.wednesday.apk.player
 
-import android.media.MediaPlayer
 import android.os.SystemClock
-
-interface PositionProvider {
-
-    fun getCurrentPosition(): Long
-}
-
-class PlayerPositionProvider(
-    private val player: MediaPlayer
-) : PositionProvider {
-
-    override fun getCurrentPosition(): Long {
-        return player.currentPosition.toLong()
-    }
-}
 
 class TimePositionProvider(private val timeOffset: Long) : PositionProvider {
 
@@ -27,5 +12,4 @@ class TimePositionProvider(private val timeOffset: Long) : PositionProvider {
         }
         return SystemClock.elapsedRealtime() - initialTime + timeOffset
     }
-
 }
