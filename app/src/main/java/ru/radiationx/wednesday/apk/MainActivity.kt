@@ -2,7 +2,6 @@ package ru.radiationx.wednesday.apk
 
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -30,27 +29,25 @@ class MainActivity : AppCompatActivity() {
         rootView.doOnLayout {
             val rect = Rect()
             it.getGlobalVisibleRect(rect)
-            startWednesday(rect)
+            startFlow(rect)
         }
     }
 
-    private fun startWednesday(rootRect: Rect) {
+    private fun startFlow(rootRect: Rect) {
         flowJob = lifecycleScope.launch {
-            frogFlow.start(this@MainActivity, rootRect)
-            remindFlow.tryAskForRemind(this@MainActivity)
-            finish()
-        }
-        flowJob?.invokeOnCompletion {
-            if (it == null) return@invokeOnCompletion
-            val error = when {
-                it !is CancellationException -> it
-                it.cause != null -> it.cause
-                else -> return@invokeOnCompletion
+            runCatching {
+                frogFlow.start(this@MainActivity, rootRect)
+                remindFlow.tryAskForRemind(this@MainActivity)
+            }.onSuccess {
+                finish()
+            }.onFailure {
+                if (it is CancellationException) {
+                    throw it
+                }
+                val message = it.message ?: "Unknown error"
+                Toast.makeText(this@MainActivity, message, Toast.LENGTH_SHORT).show()
+                finish()
             }
-            Log.e("kekeke", "invokeOnCompletion ${error}")
-            Toast.makeText(this, error?.message ?: "Unknown error", Toast.LENGTH_SHORT)
-                .show()
-            finish()
         }
     }
 

@@ -5,11 +5,11 @@ import android.media.MediaPlayer
 import android.media.PlaybackParams
 import android.os.Build
 import android.util.Log
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
+import kotlin.coroutines.resumeWithException
 
 class WednesdayPlayer {
 
@@ -17,11 +17,7 @@ class WednesdayPlayer {
         val player = MediaPlayer()
         try {
             coroutineScope {
-                player.setOnErrorListener { _, what, extra ->
-                    player.setOnErrorListener(null)
-                    cancel("Player error", Exception("Player error $what, $extra"))
-                    true
-                }
+                launch { awaitError(player) }
                 awaitPlayingStart(context, player)
                 playerScope.invoke(player)
                 awaitPlayingComplete(player)
@@ -29,7 +25,6 @@ class WednesdayPlayer {
         } finally {
             Log.e("kekeke", "WednesdayPlayer finally")
             player.release()
-            player.setOnErrorListener(null)
         }
     }
 
@@ -50,16 +45,35 @@ class WednesdayPlayer {
                 continuation.resume(Unit)
             }
             player.prepareAsync()
-            continuation.invokeOnCancellation { player.setOnPreparedListener(null) }
+            continuation.invokeOnCancellation {
+                player.setOnPreparedListener(null)
+            }
         }
     }
 
     private suspend fun awaitPlayingComplete(player: MediaPlayer) {
-        suspendCoroutine { continuation ->
+        suspendCancellableCoroutine { continuation ->
             player.setOnCompletionListener {
                 Log.e("kekeke", "media complete")
                 player.setOnCompletionListener(null)
                 continuation.resume(Unit)
+            }
+            continuation.invokeOnCancellation {
+                player.setOnCompletionListener(null)
+            }
+        }
+    }
+
+    private suspend fun awaitError(player: MediaPlayer) {
+        suspendCancellableCoroutine<Unit> { continuation ->
+            player.setOnErrorListener { _, what, extra ->
+                Log.e("kekeke", "media error")
+                player.setOnErrorListener(null)
+                continuation.resumeWithException(Exception("Player error $what, $extra"))
+                true
+            }
+            continuation.invokeOnCancellation {
+                player.setOnErrorListener(null)
             }
         }
     }
