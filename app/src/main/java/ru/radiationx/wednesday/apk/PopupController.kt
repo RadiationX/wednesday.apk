@@ -24,6 +24,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
+import ru.radiationx.wednesday.apk.config.PopupConfig
 import kotlin.math.max
 
 class PopupController {

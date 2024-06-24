@@ -2,10 +2,9 @@ package ru.radiationx.wednesday.apk.flow
 
 import android.graphics.Rect
 import android.media.MediaPlayer
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.delay
-import ru.radiationx.wednesday.apk.BeatConfig
+import ru.radiationx.wednesday.apk.config.BeatConfig
 import ru.radiationx.wednesday.apk.PopupController
 import ru.radiationx.wednesday.apk.WednesdayPlayer
 

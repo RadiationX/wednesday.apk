@@ -1,4 +1,4 @@
-package ru.radiationx.wednesday.apk
+package ru.radiationx.wednesday.apk.config
 
 import android.graphics.PointF
 import android.util.SizeF
