@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">wednesday.apk</string>
+    <string name="notification_channel_name">It is Wednesday My Dudes</string>
+    <string name="notification_channel_desc">Notification that appears on Wednesdays</string>
+    <string name="notification_title">It is Wednesday My Dudes</string>
+    <string name="notification_body">Tap to see Wednesday\'s Frog</string>
+
+    <string name="remind_dialog_title">Reminder</string>
+    <string name="remind_dialog_message">Add a reminder for next Wednesday, Dude?</string>
+    <string name="remind_dialog_positive">Of course</string>
+    <string name="remind_dialog_negative">Nah, ask next Wednesday</string>
+
+    <string name="remind_toast_fail_permission">Oh… No permission</string>
+    <string name="remind_toast_positive">See you next Wednesday, Dude 🐸</string>
+    <string name="remind_toast_negative">Dude…</string>
 </resources>

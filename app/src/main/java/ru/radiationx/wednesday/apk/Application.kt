@@ -6,6 +6,8 @@ import coil.ImageLoader
 import coil.ImageLoaderFactory
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import ru.mintrocket.lib.mintpermissions.ext.initMintPermissions
+import ru.radiationx.wednesday.apk.reminder.ReminderNotification
 
 class Application : Application(), ImageLoaderFactory {
 
@@ -18,4 +20,10 @@ class Application : Application(), ImageLoaderFactory {
             }
         }
         .build()
+
+    override fun onCreate() {
+        super.onCreate()
+        initMintPermissions()
+        ReminderNotification.createChannel(this)
+    }
 }

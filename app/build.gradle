@@ -36,6 +36,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.2'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.8.2'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.2'
+    implementation "com.github.mintrocket.MintPermissions:mintpermissions:1.1.2"
 
     implementation('io.coil-kt:coil:2.6.0')
     implementation('io.coil-kt:coil-gif:2.6.0')

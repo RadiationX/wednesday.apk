@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:name="ru.radiationx.wednesday.apk.Application"
         android:allowBackup="true"
@@ -13,6 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Wednesday"
         tools:targetApi="31">
+
         <activity
             android:name="ru.radiationx.wednesday.apk.MainActivity"
             android:exported="true">
@@ -22,6 +25,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name="ru.radiationx.wednesday.apk.reminder.ReminderReceiver"
+            android:enabled="true" />
     </application>
 
 </manifest>
