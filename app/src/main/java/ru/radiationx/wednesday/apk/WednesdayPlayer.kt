@@ -4,20 +4,26 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.media.PlaybackParams
 import android.os.Build
+import android.util.Log
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class WednesdayPlayer {
 
-    private var mediaPlayer: MediaPlayer? = null
-
-    fun init(onCompleted: () -> Unit) {
-        mediaPlayer = MediaPlayer()
-        mediaPlayer?.setOnCompletionListener { onCompleted.invoke() }
+    suspend fun play(context: Context, playerScope: suspend (MediaPlayer) -> Unit) {
+        val player = MediaPlayer()
+        try {
+            awaitPlayingStart(context, player)
+            playerScope.invoke(player)
+            awaitPlayingComplete(player)
+        } finally {
+            Log.e("kekeke", "WednesdayPlayer finally")
+            player.release()
+        }
     }
 
-    suspend fun play(context: Context) {
-        val player = mediaPlayer ?: return
+    private suspend fun awaitPlayingStart(context: Context, player: MediaPlayer) {
         suspendCancellableCoroutine { continuation ->
             val fd = context.assets.openFd("music.mp3")
             player.setDataSource(fd.fileDescriptor, fd.startOffset, fd.length)
@@ -36,13 +42,12 @@ class WednesdayPlayer {
         }
     }
 
-    fun getPosition(): Long {
-        val player = mediaPlayer ?: return 0L
-        return player.currentPosition.toLong()
-    }
-
-    fun destroy() {
-        mediaPlayer?.release()
-        mediaPlayer = null
+    private suspend fun awaitPlayingComplete(player: MediaPlayer) {
+        suspendCoroutine { continuation ->
+            player.setOnCompletionListener {
+                Log.e("kekeke", "media complete")
+                continuation.resume(Unit)
+            }
+        }
     }
 }
