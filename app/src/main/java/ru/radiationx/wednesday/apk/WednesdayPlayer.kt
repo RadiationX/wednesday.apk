@@ -4,7 +4,7 @@ import android.content.Context
 import android.media.MediaPlayer
 import android.media.PlaybackParams
 import android.os.Build
-import android.util.Log
+import android.widget.Toast
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -13,17 +13,20 @@ import kotlin.coroutines.resumeWithException
 
 class WednesdayPlayer {
 
-    suspend fun play(context: Context, playerScope: suspend (MediaPlayer) -> Unit) {
+    suspend fun play(context: Context, playerScope: suspend (PositionProvider) -> Unit) {
         val player = MediaPlayer()
         try {
             coroutineScope {
-                launch { awaitError(player) }
+                val errorJob = launch { awaitError(player) }
                 awaitPlayingStart(context, player)
-                playerScope.invoke(player)
+                playerScope.invoke(PlayerPositionProvider(player))
                 awaitPlayingComplete(player)
+                errorJob.cancel()
             }
+        } catch (ex: PlayerException) {
+            Toast.makeText(context, ex.message, Toast.LENGTH_SHORT).show()
+            playerScope.invoke(TimePositionProvider(player.currentPosition.toLong()))
         } finally {
-            Log.e("kekeke", "WednesdayPlayer finally")
             player.release()
         }
     }
@@ -32,14 +35,12 @@ class WednesdayPlayer {
         suspendCancellableCoroutine { continuation ->
             val fd = context.assets.openFd("music.mp3")
             player.setDataSource(fd.fileDescriptor, fd.startOffset, fd.length)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 player.playbackParams = PlaybackParams().apply {
-                    speed = 4f
-                    pitch = 0.5f
+                    speed = 3f
                 }
             }
             player.setOnPreparedListener {
-                Log.e("kekeke", "prepared")
                 player.start()
                 player.setOnPreparedListener(null)
                 continuation.resume(Unit)
@@ -54,7 +55,6 @@ class WednesdayPlayer {
     private suspend fun awaitPlayingComplete(player: MediaPlayer) {
         suspendCancellableCoroutine { continuation ->
             player.setOnCompletionListener {
-                Log.e("kekeke", "media complete")
                 player.setOnCompletionListener(null)
                 continuation.resume(Unit)
             }
@@ -67,9 +67,8 @@ class WednesdayPlayer {
     private suspend fun awaitError(player: MediaPlayer) {
         suspendCancellableCoroutine<Unit> { continuation ->
             player.setOnErrorListener { _, what, extra ->
-                Log.e("kekeke", "media error")
                 player.setOnErrorListener(null)
-                continuation.resumeWithException(Exception("Player error $what, $extra"))
+                continuation.resumeWithException(PlayerException("Player error $what, $extra"))
                 true
             }
             continuation.invokeOnCancellation {
@@ -77,4 +76,6 @@ class WednesdayPlayer {
             }
         }
     }
+
+    private class PlayerException(override val message: String) : Exception(message)
 }
