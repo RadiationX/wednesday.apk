@@ -2,10 +2,13 @@ package ru.radiationx.wednesday.apk
 
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnLayout
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ru.radiationx.wednesday.apk.flow.FrogFlow
@@ -35,6 +38,18 @@ class MainActivity : AppCompatActivity() {
         flowJob = lifecycleScope.launch {
             frogFlow.start(this@MainActivity, rootRect)
             remindFlow.tryAskForRemind(this@MainActivity)
+            finish()
+        }
+        flowJob?.invokeOnCompletion {
+            if (it == null) return@invokeOnCompletion
+            val error = when {
+                it !is CancellationException -> it
+                it.cause != null -> it.cause
+                else -> return@invokeOnCompletion
+            }
+            Log.e("kekeke", "invokeOnCompletion ${error}")
+            Toast.makeText(this, error?.message ?: "Unknown error", Toast.LENGTH_SHORT)
+                .show()
             finish()
         }
     }
