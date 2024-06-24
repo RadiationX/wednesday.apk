@@ -8,6 +8,8 @@ object BeatConfig {
 
     private val defaultSize = SizeF(1.0f, 1.0f)
     private val defaultPoint = PointF(0.5f, 0.5f)
+    private const val initialDelay = 3.2f
+    private const val beatTime: Double = 60000 / 145.0
 
     private val cross1 = arrayOf(
         PopupConfig(PointF(0.0f, 0.0f), defaultSize, 2.0, Color.BLUE),
@@ -59,9 +61,12 @@ object BeatConfig {
         PopupConfig(defaultPoint, SizeF(3.9f, 3.9f), 2.5, Color.RED),
     )
 
-    const val initialDelay = 3.2f
-
-    const val beatTime: Double = 60000 / 145.0
-
-    val allPopups = cross1 + cross2 + chaos + final
+    const val initialPositionMillis = (initialDelay * beatTime).toLong()
+    val plan = buildList {
+        var timeSum = initialPositionMillis
+        (cross1 + cross2 + chaos + final).forEach {
+            timeSum += (it.timing * beatTime).toLong()
+            add(TimingItem(it, timeSum))
+        }
+    }
 }

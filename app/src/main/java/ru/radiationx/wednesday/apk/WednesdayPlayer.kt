@@ -19,19 +19,23 @@ class WednesdayPlayer {
         suspendCancellableCoroutine { continuation ->
             val fd = context.assets.openFd("music.mp3")
             player.setDataSource(fd.fileDescriptor, fd.startOffset, fd.length)
-            player.prepareAsync()
             val listener = MediaPlayer.OnPreparedListener {
                 player.start()
                 continuation.resume(Unit)
             }
             player.setOnPreparedListener(listener)
+            player.prepareAsync()
             continuation.invokeOnCancellation { player.setOnPreparedListener(null) }
         }
+    }
+
+    fun getPosition(): Long {
+        val player = mediaPlayer ?: return 0L
+        return player.currentPosition.toLong()
     }
 
     fun destroy() {
         mediaPlayer?.release()
         mediaPlayer = null
     }
-
 }

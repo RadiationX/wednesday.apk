@@ -2,16 +2,25 @@ package ru.radiationx.wednesday.apk
 
 import android.app.Activity
 import android.graphics.Rect
+import android.os.Build
+import android.transition.Explode
+import android.transition.Fade
+import android.transition.TransitionSet
 import android.util.SizeF
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.PopupWindow
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import coil.load
 import coil.request.repeatCount
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlin.math.max
 
 class PopupController {
@@ -19,6 +28,8 @@ class PopupController {
     private val createdPopups = mutableListOf<PopupWindow>()
 
     private val animSizeF = SizeF(272f, 157f)
+
+    private val isNeedTransition = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
 
     private fun createPopup(activity: Activity): PopupWindow {
         val inflater = ContextCompat.getSystemService(activity, LayoutInflater::class.java)
@@ -28,6 +39,13 @@ class PopupController {
             contentView = popupView
             width = ViewGroup.LayoutParams.WRAP_CONTENT
             height = ViewGroup.LayoutParams.WRAP_CONTENT
+            if (isNeedTransition) {
+                exitTransition = TransitionSet().apply {
+                    addTransition(Explode())
+                    addTransition(Fade(Fade.MODE_OUT))
+                    ordering = TransitionSet.ORDERING_TOGETHER
+                }
+            }
         }
         createdPopups.add(popup)
         return popup
@@ -60,6 +78,29 @@ class PopupController {
             repeatCount(0)
         }
         popup.showAtLocation(activity.window.decorView, Gravity.TOP or Gravity.START, x, y)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private suspend fun dismissAndAwait() {
+        coroutineScope {
+            val dismissed = createdPopups.toList().map { popup ->
+                async {
+                    popup.dismiss()
+                    while (popup.contentView.parent != null) {
+                        delay(10L)
+                    }
+                }
+            }
+            dismissed.awaitAll()
+        }
+    }
+
+    suspend fun dismiss() {
+        if (isNeedTransition) {
+            dismissAndAwait()
+        } else {
+            destroy()
+        }
     }
 
     fun destroy() {

@@ -7,9 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.doOnLayout
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.system.measureTimeMillis
 
 
 class MainActivity : AppCompatActivity() {
@@ -17,11 +17,14 @@ class MainActivity : AppCompatActivity() {
     private val player = WednesdayPlayer()
     private val popupController = PopupController()
 
+    private var finishJob: Job? = null
+    private var playingJob: Job? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val rootView = findViewById<FrameLayout>(R.id.root)
-
+        rootView.keepScreenOn = true
         rootView.doOnLayout {
             val rect = Rect()
             it.getGlobalVisibleRect(rect)
@@ -31,32 +34,47 @@ class MainActivity : AppCompatActivity() {
 
     private fun startWednesday(rootRect: Rect) {
         player.init {
-            finish()
+            finishPopups()
         }
-        lifecycleScope.launch(Dispatchers.Main.immediate) {
+        playingJob = lifecycleScope.launch(Dispatchers.Main.immediate) {
             player.play(this@MainActivity)
 
-            delay((BeatConfig.initialDelay * BeatConfig.beatTime).toLong())
-            var timeCorrection: Long
-            BeatConfig.allPopups.forEach {
-                timeCorrection = measureTimeMillis {
-                    popupController.show(this@MainActivity, rootRect, it)
+            // await initial frog
+            while (player.getPosition() <= BeatConfig.initialPositionMillis) {
+                delay(10)
+            }
+
+            BeatConfig.plan.forEach { item ->
+                popupController.show(this@MainActivity, rootRect, item.config)
+                // await next frog
+                while (player.getPosition() <= item.positionMillis) {
+                    delay(10)
                 }
-                delay((it.timing * BeatConfig.beatTime - timeCorrection).toLong())
             }
         }
     }
 
     @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
-        super.onBackPressed()
-        finish()
+        finishPopups()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         player.destroy()
         popupController.destroy()
+    }
+
+    private fun finishPopups() {
+        if (finishJob?.isActive == true) {
+            return
+        }
+        playingJob?.cancel()
+        finishJob = lifecycleScope.launch {
+            player.destroy()
+            popupController.dismiss()
+            finish()
+        }
     }
 
 }
