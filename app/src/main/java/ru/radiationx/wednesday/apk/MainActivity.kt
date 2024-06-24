@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
     private fun startWednesday(rootRect: Rect) {
         flowJob = lifecycleScope.launch {
             frogFlow.start(this@MainActivity, rootRect)
-            remindFlow.askForRemind(this@MainActivity)
+            remindFlow.tryAskForRemind(this@MainActivity)
             finish()
         }
     }

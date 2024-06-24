@@ -8,11 +8,18 @@ import androidx.annotation.StringRes
 import ru.mintrocket.lib.mintpermissions.MintPermissions
 import ru.mintrocket.lib.mintpermissions.ext.isGranted
 import ru.radiationx.wednesday.apk.R
+import ru.radiationx.wednesday.apk.reminder.ReminderDataSource
+import ru.radiationx.wednesday.apk.reminder.ReminderDateProvider
 import ru.radiationx.wednesday.apk.reminder.ReminderScheduler
+import java.util.Date
 
 class RemindFlow {
 
-    suspend fun askForRemind(context: Context) {
+    suspend fun tryAskForRemind(context: Context) {
+        val askToRemindDate = ReminderDataSource.getNextAsk(context)
+        if (askToRemindDate > Date()) {
+            return
+        }
         val result = DialogFlow.showDialog(
             context = context,
             titleRes = R.string.remind_dialog_title,
@@ -23,7 +30,9 @@ class RemindFlow {
         when (result) {
             DialogFlow.Result.Positive -> {
                 if (checkNotificationPermission()) {
-                    ReminderScheduler.scheduleNotification(context)
+                    val nextRemindDate = ReminderDateProvider.getNextRemind()
+                    ReminderScheduler.scheduleNotification(context, nextRemindDate)
+                    ReminderDataSource.saveNextAsk(context, nextRemindDate)
                     showToast(context, R.string.remind_toast_positive)
                 } else {
                     showToast(context, R.string.remind_toast_fail_permission)
@@ -31,6 +40,8 @@ class RemindFlow {
             }
 
             DialogFlow.Result.Negative -> {
+                val nextAskDate = ReminderDateProvider.getNextAsk()
+                ReminderDataSource.saveNextAsk(context, nextAskDate)
                 showToast(context, R.string.remind_toast_negative)
             }
 
