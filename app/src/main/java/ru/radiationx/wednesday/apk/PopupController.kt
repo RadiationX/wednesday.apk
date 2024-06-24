@@ -1,6 +1,7 @@
 package ru.radiationx.wednesday.apk
 
 import android.app.Activity
+import android.content.Context
 import android.graphics.Rect
 import android.os.Build
 import android.transition.Explode
@@ -15,7 +16,9 @@ import android.widget.PopupWindow
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
+import coil.imageLoader
 import coil.load
+import coil.request.ImageRequest
 import coil.request.repeatCount
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -24,6 +27,10 @@ import kotlinx.coroutines.delay
 import kotlin.math.max
 
 class PopupController {
+
+    companion object {
+        private const val frogUri = "file:///android_asset/ani1.gif"
+    }
 
     private val createdPopups = mutableListOf<PopupWindow>()
 
@@ -51,6 +58,14 @@ class PopupController {
         return popup
     }
 
+    suspend fun warmUp(context: Context) {
+        val appContext = context.applicationContext
+        val request = ImageRequest.Builder(appContext)
+            .data(frogUri)
+            .build()
+        appContext.imageLoader.execute(request)
+    }
+
     fun show(activity: Activity, rootRect: Rect, config: PopupConfig) {
         val popup = createPopup(activity)
         val popupView = popup.contentView
@@ -74,7 +89,7 @@ class PopupController {
         imageView.setBackgroundColor(config.color)
         imageView.scaleX = scaleX
         imageView.scaleY = scaleY
-        imageView.load("file:///android_asset/ani1.gif") {
+        imageView.load(frogUri) {
             repeatCount(0)
         }
         popup.showAtLocation(activity.window.decorView, Gravity.TOP or Gravity.START, x, y)

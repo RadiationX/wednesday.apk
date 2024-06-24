@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
             finishPopups()
         }
         playingJob = lifecycleScope.launch(Dispatchers.Main.immediate) {
+            popupController.warmUp(this@MainActivity)
             player.play(this@MainActivity)
 
             // await initial frog

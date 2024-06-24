@@ -2,6 +2,8 @@ package ru.radiationx.wednesday.apk
 
 import android.content.Context
 import android.media.MediaPlayer
+import android.media.PlaybackParams
+import android.os.Build
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
@@ -19,6 +21,11 @@ class WednesdayPlayer {
         suspendCancellableCoroutine { continuation ->
             val fd = context.assets.openFd("music.mp3")
             player.setDataSource(fd.fileDescriptor, fd.startOffset, fd.length)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                player.playbackParams = PlaybackParams().apply {
+                    speed = 3f
+                }
+            }
             val listener = MediaPlayer.OnPreparedListener {
                 player.start()
                 continuation.resume(Unit)
