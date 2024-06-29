@@ -1,13 +1,13 @@
 # wednesday.apk
 
-It Is Sednesday My Dudes
+It Is Wednesday My Dudes
 
 [Google Play](https://play.google.com/store/apps/details?id=ru.radiationx.wednesday.apk) or [download here](https://github.com/RadiationX/wednesday.apk/releases)
 
 This is port [wednesday.exe](https://github.com/caseif/wednesday.exe) to Android
 
 ### Features
-- It Is Sednesday My Dudes
+- It Is Wednesday My Dudes
 - AAAAAAAAAAAAAA
 - Notifications
 
